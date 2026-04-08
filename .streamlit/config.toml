@@ -14,7 +14,6 @@ maxUploadSize = 200
 enableXsrfProtection = true
 headless = true
 port = 8501
-baseUrlPath = "/"
 
 [logger]
 level = "info"
