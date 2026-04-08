@@ -55,8 +55,12 @@ htmlcov/
 .streamlit/cache/
 
 # Models and data
-models/
+models/*
+!models/dcgan_generator_best.pth
+!models/wgan-gp_generator_best.pth
 *.pth
+!models/dcgan_generator_best.pth
+!models/wgan-gp_generator_best.pth
 *.pt
 *.onnx
 data/
