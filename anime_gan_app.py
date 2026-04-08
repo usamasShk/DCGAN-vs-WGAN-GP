@@ -133,18 +133,28 @@ def load_models():
     wgan_loaded = False
     
     try:
-        dcgan_path = f"{models_dir}/dcgan_generator.pth"
-        if os.path.exists(dcgan_path):
-            dcgan_gen.load_state_dict(torch.load(dcgan_path, map_location=device))
-            dcgan_loaded = True
+        dcgan_candidates = [
+            f"{models_dir}/dcgan_generator_best.pth",
+            f"{models_dir}/dcgan_generator.pth",
+        ]
+        for dcgan_path in dcgan_candidates:
+            if os.path.exists(dcgan_path):
+                dcgan_gen.load_state_dict(torch.load(dcgan_path, map_location=device))
+                dcgan_loaded = True
+                break
     except Exception as e:
         print(f"Could not load DCGAN: {e}")
     
     try:
-        wgan_path = f"{models_dir}/wgan_generator.pth"
-        if os.path.exists(wgan_path):
-            wgan_gen.load_state_dict(torch.load(wgan_path, map_location=device))
-            wgan_loaded = True
+        wgan_candidates = [
+            f"{models_dir}/wgan-gp_generator_best.pth",
+            f"{models_dir}/wgan_generator.pth",
+        ]
+        for wgan_path in wgan_candidates:
+            if os.path.exists(wgan_path):
+                wgan_gen.load_state_dict(torch.load(wgan_path, map_location=device))
+                wgan_loaded = True
+                break
     except Exception as e:
         print(f"Could not load WGAN-GP: {e}")
     
@@ -257,7 +267,15 @@ def main():
     if not TORCH_AVAILABLE:
         st.warning("Torch could not be imported in this deployment, so the app is running in demo mode with synthetic images.")
     elif dcgan_gen is not None and wgan_gen is not None:
-        has_weights = os.path.exists("models/dcgan_generator.pth") or os.path.exists("models/wgan_generator.pth")
+        has_weights = any(
+            os.path.exists(path)
+            for path in (
+                "models/dcgan_generator_best.pth",
+                "models/dcgan_generator.pth",
+                "models/wgan-gp_generator_best.pth",
+                "models/wgan_generator.pth",
+            )
+        )
         if not has_weights:
             st.info("Model weights are not present yet. The app is running with randomly initialized models until you add .pth files to the models folder.")
     
